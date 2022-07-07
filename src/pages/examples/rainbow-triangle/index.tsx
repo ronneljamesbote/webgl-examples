@@ -33,7 +33,7 @@ const RainbowTriangle: NextPage = () => {
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position')
     gl.enableVertexAttribArray(positionAttributeLocation)
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0)
-    gl.drawArrays(gl.TRIANGLES, 0, 3)
+    gl.drawArrays(gl.TRIANGLES, 0, triangle.length / 2)
   }, [])
 
   return <CanvasContainer canvasId={canvasId} title="Rainbow Triangle" />
