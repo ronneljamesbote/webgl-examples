@@ -2,39 +2,26 @@ import type { NextPage } from 'next'
 import { useEffect } from 'react'
 
 import { CanvasContainer } from '../../../components'
-import { compileShader, createProgram } from '../../../utils/webgl'
+import { initializeInstance } from '../../../utils/webgl'
 import fragmentShaderSource from './_shaders/fragment.glsl'
 import vertexShaderSource from './_shaders/vertex.glsl'
 
+const canvasId = 'canvas'
+const canvasDimensions = 500
+
 const SimpleTriangle: NextPage = () => {
   useEffect(() => {
-    const canvasId = 'canvas'
-    const canvasDimensions = 500
-
-    const canvas: HTMLCanvasElement = document.getElementById(canvasId) as HTMLCanvasElement
-    if (!canvas) {
-      throw `Canvas element not found`
-    }
-
-    canvas.width = canvasDimensions
-    canvas.height = canvasDimensions
-    canvas.style.width = `${canvas.width}px`
-    canvas.style.height = `${canvas.height}px`
-
-    const gl = canvas.getContext('webgl2')
-    if (!gl) {
-      throw `WebGL not supported`
-    }
-
-    const vertexShader = compileShader(gl, vertexShaderSource, gl.VERTEX_SHADER)
-    const fragmentShader = compileShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER)
-    const program = createProgram(gl, vertexShader, fragmentShader)
-
-    gl.useProgram(program)
-
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-    gl.clearColor(0, 0, 1, 1)
-    gl.clear(gl.COLOR_BUFFER_BIT)
+    const { gl, program } = initializeInstance({
+      canvasId: canvasId,
+      shaders: {
+        vertexShader: vertexShaderSource,
+        fragmentShader: fragmentShaderSource,
+      },
+      options: {
+        canvasBgColor: [0, 0, 0.6],
+        canvasViewPort: [500, 500],
+      },
+    })
 
     // In pixels
     const vertexA = [100, 50]
@@ -60,7 +47,7 @@ const SimpleTriangle: NextPage = () => {
     gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2)
   }, [])
 
-  return <CanvasContainer title="Simple Triangle" />
+  return <CanvasContainer canvasId={canvasId} title="Simple Triangle" />
 }
 
 export default SimpleTriangle
