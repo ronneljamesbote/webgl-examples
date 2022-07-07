@@ -91,10 +91,10 @@ const SimpleTriangle: NextPage = () => {
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
 
-      const color = gl.getUniformLocation(program, 'color')
+      const color = gl.getUniformLocation(program, 'u_color')
       gl.uniform4fv(color, new Float32Array([1, 1, 0, 1]))
 
-      const positionAttributeLocation = gl.getAttribLocation(program, 'position')
+      const positionAttributeLocation = gl.getAttribLocation(program, 'a_position')
       gl.enableVertexAttribArray(positionAttributeLocation)
       gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0)
       gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2)
