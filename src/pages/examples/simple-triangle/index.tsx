@@ -19,7 +19,7 @@ const SimpleTriangle: NextPage = () => {
       },
       options: {
         canvasBgColor: [0, 0, 0.6],
-        canvasViewPort: [500, 500],
+        canvasViewPort: [canvasDimensions, canvasDimensions],
       },
     })
 
