@@ -2,57 +2,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect } from 'react'
 
+import { compileShader, createProgram } from '../../../utils/webgl'
 import fragmentShaderSource from './_shaders/fragment.glsl'
 import vertexShaderSource from './_shaders/vertex.glsl'
-
-const compileShader = (gl: WebGLRenderingContext, source: string, type: number): WebGLShader => {
-  const shader: WebGLShader | null = gl.createShader(type)
-  if (!shader) {
-    throw 'compile shader error'
-  }
-  gl.shaderSource(shader, source.trim())
-  gl.compileShader(shader)
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    gl.deleteShader(shader)
-    throw `compile shader error: ${gl.getShaderInfoLog(shader)}`
-  }
-
-  return shader
-}
-
-const createProgram = (
-  gl: WebGLRenderingContext,
-  vertexShader: WebGLShader,
-  fragmentShader: WebGLShader,
-  validate = false,
-): WebGLProgram => {
-  const program: WebGLProgram | null = gl.createProgram()
-  if (!program) {
-    throw `create program error`
-  }
-  gl.attachShader(program, vertexShader)
-  gl.attachShader(program, fragmentShader)
-  gl.linkProgram(program)
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    gl.deleteProgram(program)
-    throw `create program error: ${gl.getProgramInfoLog(program)}`
-  }
-  // Only do this for additional debugging.
-  if (validate) {
-    gl.validateProgram(program)
-    if (gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-      gl.deleteProgram(program)
-      throw `create program error: ${gl.getProgramInfoLog(program)}`
-    }
-  }
-  // Can delete the shaders since the program has been made.
-  gl.detachShader(program, vertexShader)
-  gl.detachShader(program, fragmentShader)
-  gl.deleteShader(vertexShader)
-  gl.deleteShader(fragmentShader)
-
-  return program
-}
 
 const SimpleTriangle: NextPage = () => {
   useEffect(() => {
