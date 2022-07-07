@@ -2,8 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect } from 'react'
 
-import fragmentShaderSource from './fragment.glsl'
-import vertexShaderSource from './vertex.glsl'
+import fragmentShaderSource from './_shaders/fragment.glsl'
+import vertexShaderSource from './_shaders/vertex.glsl'
 
 const compileShader = (gl: WebGLRenderingContext, source: string, type: number): WebGLShader => {
   const shader: WebGLShader | null = gl.createShader(type)
@@ -64,6 +64,8 @@ const SimpleTriangle: NextPage = () => {
       }
       canvas.width = 500
       canvas.height = 500
+      canvas.style.width = `${canvas.width}px`
+      canvas.style.height = `${canvas.height}px`
 
       const gl = canvas.getContext('webgl2')
       if (!gl) {
@@ -105,7 +107,18 @@ const SimpleTriangle: NextPage = () => {
         <title>WebGL Examples - Simple Triangle</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <canvas id="canvas"></canvas>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '1rem',
+        }}
+      >
+        <h1 style={{ paddingBottom: '2rem' }}>Simple Triangle</h1>
+        <canvas id="canvas"></canvas>
+      </div>
     </>
   )
 }
