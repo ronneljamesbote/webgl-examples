@@ -2,37 +2,21 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect } from 'react'
 
-// Vertex shader
-const vertexShaderSource = `
-  attribute vec4 position;
-
-  void main() {
-    gl_Position = position;
-  }
-`
-
-// Fragment shader
-const fragmentShaderSource = `
-  precision mediump float;
-  uniform vec4 color;
-
-  void main() {
-    gl_FragColor = color;
-  }
-`
+import fragmentShaderSource from './fragment.glsl'
+import vertexShaderSource from './vertex.glsl'
 
 const compileShader = (gl: WebGLRenderingContext, source: string, type: number): WebGLShader => {
   const shader: WebGLShader | null = gl.createShader(type)
   if (!shader) {
     throw 'compile shader error'
   }
-  gl.shaderSource(shader, source)
+  gl.shaderSource(shader, source.trim())
   gl.compileShader(shader)
-  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS)
-  if (!success) {
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     gl.deleteShader(shader)
     throw `compile shader error: ${gl.getShaderInfoLog(shader)}`
   }
+
   return shader
 }
 
@@ -40,6 +24,7 @@ const createProgram = (
   gl: WebGLRenderingContext,
   vertexShader: WebGLShader,
   fragmentShader: WebGLShader,
+  validate = false,
 ): WebGLProgram => {
   const program: WebGLProgram | null = gl.createProgram()
   if (!program) {
@@ -48,11 +33,24 @@ const createProgram = (
   gl.attachShader(program, vertexShader)
   gl.attachShader(program, fragmentShader)
   gl.linkProgram(program)
-  const success = gl.getProgramParameter(program, gl.LINK_STATUS)
-  if (!success) {
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     gl.deleteProgram(program)
     throw `create program error: ${gl.getProgramInfoLog(program)}`
   }
+  // Only do this for additional debugging.
+  if (validate) {
+    gl.validateProgram(program)
+    if (gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
+      gl.deleteProgram(program)
+      throw `create program error: ${gl.getProgramInfoLog(program)}`
+    }
+  }
+  // Can delete the shaders since the program has been made.
+  gl.detachShader(program, vertexShader)
+  gl.detachShader(program, fragmentShader)
+  gl.deleteShader(vertexShader)
+  gl.deleteShader(fragmentShader)
+
   return program
 }
 
@@ -67,7 +65,7 @@ const SimpleTriangle: NextPage = () => {
       canvas.width = 500
       canvas.height = 500
 
-      const gl = canvas.getContext('webgl')
+      const gl = canvas.getContext('webgl2')
       if (!gl) {
         return
       }
@@ -77,6 +75,10 @@ const SimpleTriangle: NextPage = () => {
       const program = createProgram(gl, vertexShader, fragmentShader)
 
       gl.useProgram(program)
+
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
+      gl.clearColor(0, 0, 1, 1)
+      gl.clear(gl.COLOR_BUFFER_BIT)
 
       const vertexA = [0, 0]
       const vertexB = [0, 0.5]
@@ -88,11 +90,7 @@ const SimpleTriangle: NextPage = () => {
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
 
       const color = gl.getUniformLocation(program, 'color')
-      gl.uniform4fv(color, new Float32Array([1, 0, 1, 1]))
-
-      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-      gl.clearColor(0, 0, 1, 1)
-      gl.clear(gl.COLOR_BUFFER_BIT)
+      gl.uniform4fv(color, new Float32Array([1, 1, 0, 1]))
 
       const positionAttributeLocation = gl.getAttribLocation(program, 'position')
       gl.enableVertexAttribArray(positionAttributeLocation)
