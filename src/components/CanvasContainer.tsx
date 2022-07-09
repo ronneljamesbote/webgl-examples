@@ -9,10 +9,12 @@ interface CanvasContainerProps {
 }
 
 const CanvasContainer = ({ title, headContents, children, canvasId = 'canvas' }: CanvasContainerProps) => {
+  const pageTitle = `WebGL Examples - ${title}`
+
   return (
     <>
       <Head>
-        <title>WebGL Examples - {title}</title>
+        <title>{pageTitle}</title>
         <link rel="icon" href="/favicon.ico" />
         {headContents}
       </Head>
