@@ -25,11 +25,10 @@ const drawScene = (gl: WebGL2RenderingContext, program: WebGLProgram) => {
 
   gl.useProgram(null)
   gl.bindBuffer(gl.ARRAY_BUFFER, null)
-  gl.bindVertexArray(null)
-  gl.disableVertexAttribArray(positionAttributeLocation)
 }
 
 const RainbowTriangle: NextPage = () => {
+  // In pixels
   const [translation, setTranslation] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
   useEffect(() => {
