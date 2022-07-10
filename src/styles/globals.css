@@ -7,8 +7,12 @@ body {
 }
 
 a {
-  color: inherit;
+  color: #1d4ed8;
   text-decoration: none;
+}
+
+a:hover {
+  color: #3b82f6;
 }
 
 * {
