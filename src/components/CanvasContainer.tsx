@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import { ReactNode } from 'react'
 
 interface CanvasContainerProps {
@@ -28,7 +29,12 @@ const CanvasContainer = ({ title, headContents, children, canvasId = 'canvas' }:
           padding: '1rem',
         }}
       >
-        <h1 style={{ paddingBottom: '2rem' }}>{title}</h1>
+        <div style={{ paddingBottom: '2rem', textAlign: 'center' }}>
+          <Link href="/">
+            <a style={{ marginBottom: '1.5rem', display: 'inline-block' }}>Return Home</a>
+          </Link>
+          <h1>{title}</h1>
+        </div>
         <canvas id={canvasId}></canvas>
         {children}
       </div>
