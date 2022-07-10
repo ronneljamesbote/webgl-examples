@@ -7,6 +7,7 @@ uniform vec2 u_translation;
 out vec4 v_color;
 
 void main() {
+    // Convert pixels to clip space
     vec2 translated = a_position + u_translation;
     vec2 valueA = translated / u_resolution;
     vec2 valueB = valueA * 2.0;
